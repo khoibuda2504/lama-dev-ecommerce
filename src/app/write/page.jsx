@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import styles from "./write.module.css";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import "react-quill/dist/quill.bubble.css";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
@@ -26,7 +26,7 @@ const slugify = (str) =>
 const WritePage = () => {
   const { status } = useSession();
   const router = useRouter();
-  const ReactQuill = dynamic(() => import('react-quill'), {ssr: false})
+  const ReactQuill = useMemo(() => dynamic(() => import('react-quill'), {ssr: false}), [])
 
   const [fileInput, setFileInput] = useState(null);
   const [value, setValue] = useState("");
