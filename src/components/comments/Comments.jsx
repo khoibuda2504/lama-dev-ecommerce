@@ -23,18 +23,16 @@ const fetcher = async (url) => {
 
 const Comments = ({ postSlug }) => {
   const { status, data: userData } = useSession();
-
   const { data, mutate, isLoading } = useSWR(
-    `${process.env.NEXTAUTH_URL}/api/comments?postSlug=${postSlug}`,
+    `/api/comments?postSlug=${postSlug}`,
     fetcher
   );
-
   const [desc, setDesc] = useState("");
 
   const handleSubmit = async () => {
     await fetch("/api/comments", {
       method: "POST",
-      body: JSON.stringify({ desc, postSlug }),
+      body: JSON.stringify({ desc, postId: postSlug }),
     });
     setDesc('')
     mutate();
