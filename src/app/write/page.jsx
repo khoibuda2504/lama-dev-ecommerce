@@ -27,39 +27,20 @@ const WritePage = () => {
   const { status } = useSession();
   const router = useRouter();
 
-  const [open, setOpen] = useState(false);
-  const [file, setFile] = useState(null);
-  const [media, setMedia] = useState("");
+  const [fileInput, setFileInput] = useState(null);
   const [value, setValue] = useState("");
   const [title, setTitle] = useState("");
   const [catSlug, setCatSlug] = useState("");
-
+  const [previewImg, setPreview] = useState('')
   useEffect(() => {
-    const storage = getStorage(app);
-    const upload = () => {
-      const name = new Date().getTime() + file.name;
-      const storageRef = ref(storage, name);
-
-      const uploadTask = uploadBytesResumable(storageRef, file);
-
-      uploadTask.on(
-        "state_changed",
-        (snapshot) => {
-          const progress =
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          console.log("Upload is " + progress + "% done");
-        },
-        (error) => { },
-        () => {
-          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-            setMedia(downloadURL);
-          });
-        }
-      );
-    };
-
-    file && upload();
-  }, [file]);
+    if (fileInput?.files && fileInput?.files?.[0]) {
+      var reader = new FileReader();
+      reader.onload = function (e) {
+        setPreview(e.target.result)
+      }
+      reader.readAsDataURL(fileInput?.files?.[0]);
+    }
+  }, [fileInput]);
 
   if (status === "loading") {
     return <div className={styles.loading}>Loading...</div>;
@@ -72,58 +53,97 @@ const WritePage = () => {
 
 
   const handleSubmit = async () => {
-    const res = await fetch("/api/posts", {
-      method: "POST",
-      body: JSON.stringify({
-        title,
-        desc: value,
-        img: media,
-        slug: slugify(title),
-        catSlug: catSlug || "style"
-      }),
-    });
-
-    if (res.status === 200) {
-      const data = await res.json();
-      router.push(`/posts/${data.slug}`);
+    const fetcher = async (downloadUrl = null) => {
+      const res = await fetch("/api/posts", {
+        method: "POST",
+        body: JSON.stringify({
+          title,
+          desc: value,
+          img: downloadUrl,
+          slug: slugify(title),
+          catSlug: catSlug || "style"
+        }),
+      })
+      if (!res.ok) return
+      const data = await res.json()
+      router.push(`/posts/${data.id}`);
     }
+    if (!fileInput) {
+      fetcher()
+      return
+    }
+    const file = fileInput?.files?.[0]
+    const storage = getStorage(app);
+    const name = new Date().getTime() + file.name;
+    const storageRef = ref(storage, name);
+
+    const uploadTask = uploadBytesResumable(storageRef, file);
+
+    uploadTask.on(
+      "state_changed",
+      () => { },
+      () => { },
+      async () => {
+        const downloadUrl = await getDownloadURL(uploadTask.snapshot.ref);
+        fetcher(downloadUrl)
+      })
   };
 
   return (
     <div className={styles.container}>
+      <div className={styles.header}>
+        <div className={styles.options}>
+          <div className="d-flex align-center">
+            <span className="mr-2">Select category:</span>
+            <select className={styles.select} onChange={(e) => setCatSlug(e.target.value)}>
+              <option value="style">style</option>
+              <option value="fashion">fashion</option>
+              <option value="food">food</option>
+              <option value="culture">culture</option>
+              <option value="travel">travel</option>
+              <option value="coding">coding</option>
+            </select>
+          </div>
+          {!previewImg &&
+            <div className="d-flex align-center">
+              <span className="mr-2">Add image:</span>
+              <div className={styles.add}>
+                <input
+                  type="file"
+                  id="image"
+                  onChange={(e) => setFileInput(e.target)}
+                  style={{ display: "none" }}
+                />
+                <button className={styles.addButton}>
+                  <label htmlFor="image">
+                    <Image src="/image.png" alt="image" width={16} height={16} />
+                  </label>
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+        <button className={styles.publish} onClick={handleSubmit}>
+          Publish
+        </button>
+      </div>
       <input
         type="text"
         placeholder="Title"
         className={styles.input}
         onChange={(e) => setTitle(e.target.value)}
       />
-      <select className={styles.select} onChange={(e) => setCatSlug(e.target.value)}>
-        <option value="style">style</option>
-        <option value="fashion">fashion</option>
-        <option value="food">food</option>
-        <option value="culture">culture</option>
-        <option value="travel">travel</option>
-        <option value="coding">coding</option>
-      </select>
       <div className={styles.editor}>
-        <button className={styles.button} onClick={() => setOpen(!open)}>
-          <Image src="/plus.png" alt="" width={16} height={16} />
-        </button>
-        {open && (
-          <div className={styles.add}>
-            <input
-              type="file"
-              id="image"
-              onChange={(e) => setFile(e.target.files[0])}
-              style={{ display: "none" }}
-            />
-            <button className={styles.addButton}>
-              <label htmlFor="image">
-                <Image src="/image.png" alt="" width={16} height={16} />
-              </label>
-            </button>
+        {previewImg &&
+          <div className={styles.preview}>
+            <div className={styles.previewImg}>
+              <Image src={previewImg} fill alt="preview" />
+            </div>
+            <div className={styles.previewBtn} onClick={() => setPreview('')}>
+              X
+            </div>
           </div>
-        )}
+        }
         <ReactQuill
           className={styles.textArea}
           theme="bubble"
@@ -132,9 +152,6 @@ const WritePage = () => {
           placeholder="Tell your story..."
         />
       </div>
-      <button className={styles.publish} onClick={handleSubmit}>
-        Publish
-      </button>
     </div>
   );
 };

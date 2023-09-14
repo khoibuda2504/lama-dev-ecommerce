@@ -1,7 +1,8 @@
-import Menu from "@/components/Menu/Menu";
+import Menu from "@/components/menu/Menu";
 import styles from "./singlePage.module.css";
 import Image from "next/image";
 import Comments from "@/components/comments/Comments";
+import Link from "next/link";
 
 const getData = async (slug) => {
   const res = await fetch(`http://localhost:3000/api/posts/${slug}`, {
@@ -17,9 +18,11 @@ const getData = async (slug) => {
 
 const SinglePage = async ({ params }) => {
   const { slug } = params;
-
   const data = await getData(slug);
-
+  if (data?.data === null) return <>
+  <h1 className={styles.notFound}>Sorry but your post is not found in the search results</h1>
+  <Link href="/">Go to homepage</Link>
+  </>
   return (
     <div className={styles.container}>
       <div className={styles.infoContainer}>
@@ -28,18 +31,18 @@ const SinglePage = async ({ params }) => {
           <div className={styles.user}>
             {data?.user?.image && (
               <div className={styles.userImageContainer}>
-                <Image src={data.user.image} alt="" fill className={styles.avatar} />
+                <Image priority src={data.user.image} alt="" fill className={styles.avatar} />
               </div>
             )}
             <div className={styles.userTextContainer}>
-              <span className={styles.username}>{data?.user.name}</span>
+              <span className={styles.username}>{data?.user?.name}</span>
               <span className={styles.date}>01.01.2024</span>
             </div>
           </div>
         </div>
         {data?.img && (
           <div className={styles.imageContainer}>
-            <Image src={data.img} alt="" fill className={styles.image} />
+            <Image priority src={data.img} alt="" fill className={styles.image} />
           </div>
         )}
       </div>
@@ -47,7 +50,7 @@ const SinglePage = async ({ params }) => {
         <div className={styles.post}>
           <div
             className={styles.description}
-            dangerouslySetInnerHTML={{ __html: data?.desc }}
+            dangerouslySetInnerHTML={{ __html: (data?.desc ?? '') }}
           />
           <div className={styles.comment}>
             <Comments postSlug={slug} />

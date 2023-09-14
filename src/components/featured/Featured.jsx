@@ -21,7 +21,7 @@ const Featured = async () => {
       </h1>
       <div className={styles.post}>
         <div className={styles.imgContainer}>
-          <Image src={posts?.[0]?.img} alt="" fill className={styles.image} />
+          <Image priority src={posts?.[0]?.img} alt="" fill className={styles.image} />
         </div>
         <div className={styles.textContainer}>
           <h1 className={styles.postTitle}>{posts?.[0]?.title}</h1>
@@ -29,7 +29,7 @@ const Featured = async () => {
           {posts?.[0]?.desc}
           </p>
           <button className={styles.button}>
-            <Link href={`posts/${posts?.[0]?.slug}`}>
+            <Link href={`posts/${posts?.[0]?.id}`}>
             Read More
             </Link>
           </button>

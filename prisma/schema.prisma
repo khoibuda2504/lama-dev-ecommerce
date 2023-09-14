@@ -67,7 +67,7 @@ model Category {
 
 model Post {
   id        String    @id @default(cuid()) @map("_id")
-  createdAt DateTime @default(now())
+  createdAt DateTime  @default(now())
   slug      String    @unique
   title     String
   desc      String
@@ -81,11 +81,11 @@ model Post {
 }
 
 model Comment {
-  id        String @id @default(cuid()) @map("_id")
+  id        String   @id @default(cuid()) @map("_id")
   createdAt DateTime @default(now())
   desc      String
   userEmail String
-  user      User   @relation(fields: [userEmail], references: [email])
-  postSlug  String
-  post      Post   @relation(fields: [postSlug], references: [slug])
+  user      User     @relation(fields: [userEmail], references: [email])
+  postId  String
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
 }

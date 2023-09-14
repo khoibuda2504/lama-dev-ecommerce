@@ -5,9 +5,7 @@
 }
 
 .select{
-  margin-bottom: 50px;
   padding: 10px 20px;
-  margin-left: 50px;
   width: max-content;
 }
 
@@ -39,12 +37,10 @@
   display: flex;
   gap: 20px;
   background-color: var(--bg);
-  position: absolute;
-  z-index: 999;
-  width: 100%;
-  left: 50px;
 }
-
+.add img {
+  cursor: pointer;
+}
 .input{
   padding: 50px;
   font-size: 64px;
@@ -52,6 +48,7 @@
   outline: none;
   background-color: transparent;
   color: var(--textColor);
+  padding-left: 0;
 }
 
 .input::placeholder{
@@ -59,17 +56,76 @@
 }
 
 .textArea {
-  width: 100%;
+  width: calc(100% - 320px);
 }
 
 .publish{
-  position: absolute;
-  top: 0px;
-  right: 0px;
   padding: 10px 20px;
   border: none;
   background-color: #1a8917;
   color: white;
   cursor: pointer;
   border-radius: 20px;
+  width: max-content;
+}
+.previewImg {
+  position: relative;
+  width: 300px;
+  height: 300px;
+  flex-shrink: 0;
+}
+.previewImg img {
+  object-fit: cover;
+}
+.options {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.preview {
+  position: relative;
+}
+.previewBtn {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  z-index: 1;
+  color: gray;
+  background: white;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 14px;
+  cursor: pointer;
+}
+.header {
+  display: flex;
+  justify-content: space-between;
+}
+@media screen and (max-width: 768px) {
+  .editor {
+    flex-direction: column;
+  }
+  .textArea {
+    width: 100%;
+  }
+  .preview {
+    width: fit-content;
+  }
+}
+@media screen and (max-width: 640px) {
+  .header, .options {
+    flex-direction: column;
+  }
+  .options {
+    align-items: flex-start;
+    margin-top: 10px;
+  }
+  .publish {
+    margin-top: 10px;
+  }
 }

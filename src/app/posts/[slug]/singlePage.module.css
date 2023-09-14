@@ -64,6 +64,10 @@
   margin-top: 60px;
 }
 
+.description {
+  word-break: break-all;
+}
+
 .description p {
   font-size: 20px;
   font-weight: 300;
@@ -81,8 +85,13 @@
   }
 }
 @media screen and (max-width: 1024px) {
+  .infoContainer {
+    flex-direction: column;
+    align-items: flex-start;
+  }
   .imageContainer {
-    display: none;
+    flex: auto;
+    width: 100%
   }
 }
 @media screen and (max-width: 640px) {
@@ -93,4 +102,7 @@
   .description p{
     font-size: 18px;
   }
+}
+.notFound {
+  margin-top: 30px;
 }

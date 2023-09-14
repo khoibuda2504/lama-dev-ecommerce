@@ -55,6 +55,8 @@ a {
 @media screen and (max-width: 768px) {
   .wrapper {
     max-width: 640px;
+    padding-left: 20px;
+    padding-right: 20px;
   }
 }
 @media screen and (max-width: 640px) {
@@ -68,4 +70,16 @@ a {
 
 .quill > .ql-container > .ql-editor.ql-blank::before{
   color: #b3b3b1;
+}
+.ql-editor {
+  padding-left: 0!important;
+}
+.d-flex {
+  display: flex;
+}
+.align-center {
+  align-items: center;
+}
+.mr-2 {
+  margin-right: 10px;
 }

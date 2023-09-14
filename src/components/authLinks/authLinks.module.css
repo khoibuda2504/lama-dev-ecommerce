@@ -17,7 +17,7 @@
 
 .responsiveMenu{
   position: absolute;
-  top: 50px;
+  top: 44px;
   left: 0;
   background-color: var(--bg);
   height: calc(100vh - 50px);
@@ -30,7 +30,15 @@
   font-size: 36px;
   z-index: 999;
 }
-
+.burgerOpen > div:first-child {
+  transform: rotate(-45deg) translateY(10px);
+}
+.burgerOpen > div:nth-child(2) {
+  display: none;
+}
+.burgerOpen > div:last-child {
+  transform: rotate(45deg) translateY(-10px);
+}
 @media screen and (max-width: 640px) {
   .burger {
     display: flex;

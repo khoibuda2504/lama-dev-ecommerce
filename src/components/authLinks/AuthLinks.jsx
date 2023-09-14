@@ -25,7 +25,7 @@ const AuthLinks = () => {
           </span>
         </>
       )}
-      <div className={styles.burger} onClick={() => setOpen(!open)}>
+      <div className={`${styles.burger} ${open && styles.burgerOpen}`} onClick={() => setOpen(!open)}>
         <div className={styles.line}></div>
         <div className={styles.line}></div>
         <div className={styles.line}></div>
@@ -33,9 +33,7 @@ const AuthLinks = () => {
       {open && (
         <div className={styles.responsiveMenu}>
           <Link href="/">Homepage</Link>
-          <Link href="/">About</Link>
-          <Link href="/">Contact</Link>
-          {status === "notauthenticated" ? (
+          {status === "unauthenticated" ? (
             <Link href="/login">Login</Link>
           ) : (
             <>
