@@ -13,7 +13,7 @@ import {
   getDownloadURL,
 } from "firebase/storage";
 import { app } from "@/utils/firebase";
-import ReactQuill from "react-quill";
+import dynamic from "next/dynamic";
 
 const slugify = (str) =>
   str
@@ -26,6 +26,7 @@ const slugify = (str) =>
 const WritePage = () => {
   const { status } = useSession();
   const router = useRouter();
+  const ReactQuill = dynamic(() => import('react-quill'), {ssr: false})
 
   const [fileInput, setFileInput] = useState(null);
   const [value, setValue] = useState("");
