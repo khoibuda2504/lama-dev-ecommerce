@@ -10,9 +10,6 @@ export const DELETE = async (req, { params }) => {
       status: 200
     });
   } catch (err) {
-    console.log(err);
-    return new NextResponse(
-      JSON.stringify({ message: "Something went wrong!" }, { status: 500 })
-    );
+    throw new Error(err)
   }
 }
