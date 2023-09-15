@@ -1,3 +1,5 @@
+import prisma from "@/utils/connect";
+
 export const DELETE = async (req, { params }) => {
   const { slug } = params;
   try {
