@@ -14,7 +14,10 @@
   height: 2px;
   background-color: var(--textColor);
 }
-
+.avatar {
+  border-radius: 50%;
+  margin-right: 3px;
+}
 .responsiveMenu{
   position: absolute;
   top: 44px;
