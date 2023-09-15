@@ -2,10 +2,11 @@
 
 import Image from "next/image";
 import styles from "./write.module.css";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import "react-quill/dist/quill.bubble.css";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
+import { toast } from 'react-toastify';
 import {
   getStorage,
   ref,
@@ -26,13 +27,14 @@ const slugify = (str) =>
 const WritePage = () => {
   const { status } = useSession();
   const router = useRouter();
-  const ReactQuill = useMemo(() => dynamic(() => import('react-quill'), {ssr: false}), [])
+  const ReactQuill = useMemo(() => dynamic(() => import('react-quill'), { ssr: false }), [])
 
   const [fileInput, setFileInput] = useState(null);
   const [value, setValue] = useState("");
   const [title, setTitle] = useState("");
   const [catSlug, setCatSlug] = useState("");
   const [previewImg, setPreview] = useState('')
+  const [submitting, setSubmitting] = useState(false)
   useEffect(() => {
     if (fileInput?.files && fileInput?.files?.[0]) {
       var reader = new FileReader();
@@ -54,20 +56,30 @@ const WritePage = () => {
 
 
   const handleSubmit = async () => {
+    setSubmitting(true)
     const fetcher = async (downloadUrl = null) => {
-      const res = await fetch("/api/posts", {
-        method: "POST",
-        body: JSON.stringify({
-          title,
-          desc: value,
-          img: downloadUrl,
-          slug: slugify(title),
-          catSlug: catSlug || "style"
-        }),
-      })
-      if (!res.ok) return
-      const data = await res.json()
-      router.push(`/posts/${data.id}`);
+      try {
+        const res = await fetch("/api/posts", {
+          method: "POST",
+          body: JSON.stringify({
+            title,
+            desc: value,
+            img: downloadUrl,
+            slug: slugify(title),
+            catSlug: catSlug || "style"
+          }),
+        })
+        if (!res.ok) return
+        toast.success('Your post has been published!')
+        const data = await res.json()
+        router.push(`/posts/${data.id}`);
+      } catch (error) {
+        toast.error('Something wrong! Try again later')
+      }
+      const timeout = setTimeout(() => {
+        setSubmitting(false)
+        clearTimeout(timeout)
+      }, 1200)
     }
     if (!fileInput) {
       fetcher()
@@ -92,6 +104,7 @@ const WritePage = () => {
 
   return (
     <div className={styles.container}>
+      {/* <div onClick={() => toast.success('Wow so easy!')}>Test toast</div> */}
       <div className={styles.header}>
         <div className={styles.options}>
           <div className="d-flex align-center">
@@ -124,8 +137,8 @@ const WritePage = () => {
             </div>
           }
         </div>
-        <button className={styles.publish} onClick={handleSubmit}>
-          Publish
+        <button className={styles.publish} disabled={!title || submitting} onClick={handleSubmit}>
+          {submitting ? "Publishing" : "Publish"}
         </button>
       </div>
       <input

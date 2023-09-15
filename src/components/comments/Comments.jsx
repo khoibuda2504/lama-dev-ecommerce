@@ -7,6 +7,7 @@ import useSWR from "swr";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { formatDate } from '@/utils/function';
+import { toast } from 'react-toastify';
 
 const fetcher = async (url) => {
   const res = await fetch(url);
@@ -30,18 +31,28 @@ const Comments = ({ postSlug }) => {
   const [desc, setDesc] = useState("");
 
   const handleSubmit = async () => {
-    await fetch("/api/comments", {
-      method: "POST",
-      body: JSON.stringify({ desc, postId: postSlug }),
-    });
-    setDesc('')
-    mutate();
+    try {
+      await fetch("/api/comments", {
+        method: "POST",
+        body: JSON.stringify({ desc, postId: postSlug }),
+      });
+      toast.success('You have commented successfully')
+      setDesc('')
+      mutate();
+    } catch (error) {
+      toast.error('Something wrong! Try again later')
+    }
   };
   const handleDeleteComment = async (commentId) => {
-    await fetch(`/api/comments/${commentId}`, {
-      method: "DELETE"
-    })
-    mutate();
+    try {
+      await fetch(`/api/comments/${commentId}`, {
+        method: "DELETE"
+      })
+      toast.success('You have deleted comment successfully')
+      mutate();
+    } catch (error) {
+      toast.error('Something wrong! Try again later')
+    }
   };
   return (
     <div className={styles.container}>

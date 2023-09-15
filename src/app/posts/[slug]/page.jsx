@@ -3,6 +3,7 @@ import styles from "./singlePage.module.css";
 import Image from "next/image";
 import Comments from "@/components/comments/Comments";
 import Link from "next/link";
+import ButtonDelete from "@/components/buttonDelete/ButtonDelete";
 
 const getData = async (slug) => {
   const res = await fetch(`${process.env.NEXTAUTH_URL}/api/posts/${slug}`, {
@@ -20,13 +21,14 @@ const SinglePage = async ({ params }) => {
   const { slug } = params;
   const data = await getData(slug);
   if (data?.data === null) return <>
-  <h1 className={styles.notFound}>Sorry but your post is not found in the search results</h1>
-  <Link href="/">Go to homepage</Link>
+    <h1 className={styles.notFound}>Sorry but your post is not found in the search results</h1>
+    <Link href="/">Go to homepage</Link>
   </>
   return (
     <div className={styles.container}>
       <div className={styles.infoContainer}>
         <div className={styles.textContainer}>
+          <ButtonDelete slug={slug} createdEmail={data?.user?.email}/>
           <h1 className={styles.title}>{data?.title}</h1>
           <div className={styles.user}>
             {data?.user?.image && (
