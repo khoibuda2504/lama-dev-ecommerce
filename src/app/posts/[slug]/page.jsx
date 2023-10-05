@@ -4,7 +4,6 @@ import Image from "next/image";
 import Comments from "@/components/comments/Comments";
 import Link from "next/link";
 import ButtonDelete from "@/components/buttonDelete/ButtonDelete";
-
 const getData = async (slug) => {
   const res = await fetch(`${process.env.NEXTAUTH_URL}/api/posts/${slug}`, {
     cache: "no-store",

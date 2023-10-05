@@ -1,0 +1,13 @@
+.overlay {
+  position: fixed;
+  background: white;
+  inset: 0;
+  z-index: 1;
+  height: 100vh;
+}
+.overlay + span {
+  z-index: 2;
+  position: fixed!important;
+  top: 50%!important;
+  left: 50%!important;
+}
